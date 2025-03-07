@@ -1,6 +1,7 @@
 const Transfer = require("../models/Transfer");
 const axios = require("axios");
 require("dotenv").config();
+const getCountryFromCurrency = require("../utils/currencyUtils");
 
 const convert = async (req, res) => {
   const { from, to, amount } = req.body;
@@ -25,12 +26,18 @@ const convert = async (req, res) => {
     }
 
     const convertedAmount = (amount * conversionRate).toFixed(2);
+
+    // Use the utility function to get the country name
+    const fromCountry = getCountryFromCurrency(from);
+    const toCountry = getCountryFromCurrency(to);
+
     const transfer = new Transfer({
-      fromCountry: from,
-      toCountry: to,
+      fromCountry,
+      toCountry,
       transferAmount: amount,
       convertedAmount,
     });
+
     await transfer.save();
 
     res.json({ from, to, amount, convertedAmount, rate: conversionRate });
