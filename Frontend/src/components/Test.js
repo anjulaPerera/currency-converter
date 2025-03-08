@@ -1,13 +1,14 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Button, TextField, Select, MenuItem } from "@mui/material";
+import { Button, TextField, Select, MenuItem, Switch } from "@mui/material";
 
-const CurrencyConverter = () => {
+const Test = () => {
   const [from, setFrom] = useState("USD");
   const [to, setTo] = useState("LKR");
   const [amount, setAmount] = useState("");
   const [converted, setConverted] = useState(null);
   const [history, setHistory] = useState([]);
+  const [showTransfers, setShowTransfers] = useState(false)
 
   const handleConvert = async () => {
     const response = await axios.post(
@@ -34,6 +35,10 @@ const CurrencyConverter = () => {
     fetchHistory();
   };
 
+  const handleSwitchChange = (event) => {
+    setShowTransfers(event.target.checked)
+  }
+
   return (
     <div class="d-flex w-100 ">
         <div>
@@ -59,8 +64,8 @@ const CurrencyConverter = () => {
       <Button onClick={handleConvert}>Convert</Button>
       {converted && <h2>Converted Amount: {converted}</h2>} </div>
 <div>
-      <h2>Transfer History</h2>
-      {history.map((record) => (
+      <h2>Transfer History</h2><Switch checked = {showTransfers} onChange={handleSwitchChange}/>
+      {showTransfers?history.map((record) => (
         <div key={record._id}>
           <p>
             {record.fromCountry} → {record.toCountry}: {record.transferAmount} →{" "}
@@ -68,9 +73,9 @@ const CurrencyConverter = () => {
           </p>
           <Button onClick={() => handleRevoke(record._id)}>Revoke</Button>
         </div>
-      ))}</div>
+      )): null}</div>
     </div>
   );
 };
 
-export default CurrencyConverter;
+export default Test;
